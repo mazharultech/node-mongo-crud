@@ -9,6 +9,7 @@
 
 <body>
     <h1>Hello Party people I am working hard !!!</h1>
+    <br>
     <form action="/addProduct" method="post">
         <input type="text" placeholder="name" name="name">
         <input type="text" placeholder="price" name="price">
@@ -19,9 +20,12 @@
     <div id="container">
 
     </div>
+    <div id="update">
+
+    </div>
 
     <script>
-        function loadProductData() {
+        function loadAllProducts() {
             fetch('/products')
                 .then(res => res.json())
                 .then(products => {
@@ -30,12 +34,31 @@
                     products.forEach(pd => {
                         const p = document.createElement('p');
                         p.innerHTML = `<strong>${pd.name}</strong> -- price: ${pd.price} quantity: ${pd.quantity}
+                        <button onclick="loadProduct('${pd._id}')">update</button>
                         <button onclick="deleteProduct('${pd._id}')">DELETE</button>`;
                         container.appendChild(p);
                     });
                 })
         }
-        loadProductData();
+        loadAllProducts();
+
+        const loadProduct = (id) => {
+            fetch(`product/${id}`)
+            .then(res => res.json())
+            .then(data => {
+                const update = document.getElementById('update')
+                update.innerHTML = `
+                    <strong>update: ${data._id}</strong>
+                    <br>
+                    price: <input type="text" value="${data.price}" id="price">
+                    <br>
+                    quantity: <input type="text" value="${data.quantity}" id="quantity">
+                    <br>
+                    <button>Submit</button>
+                `;
+            })
+        }
+
         const deleteProduct = (id) => {
             
             fetch(`/delete/${id}`, {
